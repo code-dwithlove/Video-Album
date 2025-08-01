@@ -3,37 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Video Slideshow</title>
+  <title>Your Memory Slideshow</title>
   <style>
     body {
       margin: 0;
       background: #111;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
       overflow: hidden;
       font-family: sans-serif;
     }
+
     #slideshow {
       position: relative;
-      width: 220px;
-      height: 320px;
+      width: 90vw;
+      height: 90vh;
       cursor: pointer;
     }
+
     video {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      max-width: 100%;
+      max-height: 100%;
       border-radius: 10px;
+      transition: transform 0.5s ease, opacity 0.6s ease;
+      opacity: 0;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     }
-    video.revealed {
+
+    .revealed {
       opacity: 1;
-      transform: scale(1);
     }
   </style>
 </head>
@@ -67,9 +68,15 @@
 
     const slideshow = document.getElementById('slideshow');
     let index = 0;
+    let previousVideo = null;
 
     slideshow.addEventListener('click', () => {
       if (index >= videoList.length) return;
+
+      if (previousVideo) {
+        previousVideo.pause();
+        previousVideo.muted = true;
+      }
 
       const video = document.createElement('video');
       video.src = videoList[index].src;
@@ -77,12 +84,11 @@
       video.muted = false;
       video.playsInline = true;
       video.loop = true;
+      video.controls = false;
 
-      // Slight random rotation for stacked feel
       const rotation = (Math.random() * 10 - 5).toFixed(2);
-      video.style.transform = `rotate(${rotation}deg) scale(0.8)`;
+      video.style.transform = `rotate(${rotation}deg) scale(0.85)`;
 
-      // Fade + scale in
       requestAnimationFrame(() => {
         slideshow.appendChild(video);
         requestAnimationFrame(() => {
@@ -90,6 +96,7 @@
         });
       });
 
+      previousVideo = video;
       index++;
     });
   </script>
